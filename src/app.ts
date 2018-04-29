@@ -8,6 +8,7 @@ import * as io from 'socket.io';
 import * as mongodb from 'mongodb';
 import * as Auth from './sockets/auth/index';
 import * as Tasks from './sockets/tasks/index';
+import * as Messages from './sockets/messages/index';
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { ViewsService } from './services/views.service';
@@ -53,6 +54,10 @@ class App {
       {
         name: 'task_all',
         socket_service: Tasks.AllSocket
+      },
+      {
+        name: 'message_add',
+        socket_service: Messages.AddSocket
       }
     ];
     
