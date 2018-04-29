@@ -20,6 +20,7 @@ export enum EErrors {
   sign_a_contract_with_client = 'The contract is not found! Sign a contract with the client.',
   empty_login_name            = 'Can not create a user with an empty login name.',
   empty_name                  = 'Can not create a user with an empty name.',
+  empty_task_title            = 'Can not create a task with an empty title name.',
   username_not_by_longer      = 'Username may not be longer than 60 characters.',
   username_exists             = 'Sorry, that username already exists!',
   add_user_error              = 'Insert user error!',

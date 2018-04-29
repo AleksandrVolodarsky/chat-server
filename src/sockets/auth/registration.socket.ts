@@ -3,6 +3,7 @@ import { EErrors } from '../../enums/eerrors.enum';
 import * as hash from 'wordpress-hash-node';
 import * as util from 'util';
 import * as _ from 'lodash';
+import * as md5 from 'md5';
 
 export class RegistrationSocket extends Socket{
 
@@ -58,7 +59,8 @@ export class RegistrationSocket extends Socket{
               email: this.email,
               password: this.passwordHash,
               created: (new Date()).toISOString().substring(0, 19).replace('T', ' '),
-              role: 1
+              role: 1,
+              token: md5(this.email + this.passwordHash + '.::HACK THE SYSTEM::.')
             });
         }
       )

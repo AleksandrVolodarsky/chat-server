@@ -19,7 +19,6 @@ export class LoginSocket extends Socket{
   }
 
   launch() {
-
     return Promise
       .resolve()
       .then(
@@ -35,12 +34,14 @@ export class LoginSocket extends Socket{
           if (this.password.length <= 4) {
             throw new Error(util.format(EErrors.must_be_more_than, 'Password', '4 characters!'));
           }
-          return this.app.db.collection('users').findOne({ email: this.email });
+          return this.app.db
+            .collection('users')
+            .findOne({ email: this.email });
         }
       )
       .then(
         u => {
-          if(u.password) {
+          if(u && u.password) {
             if (hash.CheckPassword(this.password, u.password)) {
               return this.socket.emit(this.event_name, u);
             }

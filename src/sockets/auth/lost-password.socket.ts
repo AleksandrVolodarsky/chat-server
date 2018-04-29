@@ -3,11 +3,16 @@ import { EErrors } from '../../enums/eerrors.enum';
 import * as hash from 'wordpress-hash-node';
 import * as util from 'util';
 import * as _ from 'lodash';
+import { MailService } from '../../services/mail.service';
 
 export class LostPasswordSocket extends Socket{
 
   get email(): string {
     return this.value.email;
+  }
+
+  get origin(): string {
+    return this.value.origin;
   }
 
   get random_string(): string {
@@ -33,6 +38,11 @@ export class LostPasswordSocket extends Socket{
       .then(
         u => {
           if (u) {
+            MailService.mail(
+              this.email, 
+              'Reset password link', 
+              `${ this.origin}/#/reset-password/${ lost_password_key }`
+            );
             return this.app.db
               .collection('users')
               .update(

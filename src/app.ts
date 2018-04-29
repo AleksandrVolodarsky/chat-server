@@ -7,6 +7,7 @@ import * as child from 'child_process';
 import * as io from 'socket.io';
 import * as mongodb from 'mongodb';
 import * as Auth from './sockets/auth/index';
+import * as Tasks from './sockets/tasks/index';
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { ViewsService } from './services/views.service';
@@ -38,12 +39,20 @@ class App {
         socket_service: Auth.LoginSocket
       },
       {
-        name: 'lost-password',
+        name: 'lost_password',
         socket_service: Auth.LostPasswordSocket
       },
       {
-        name: 'reset-password',
+        name: 'reset_password',
         socket_service: Auth.ResetPasswordSocket
+      },
+      {
+        name: 'task_add',
+        socket_service: Tasks.AddSocket
+      },
+      {
+        name: 'task_all',
+        socket_service: Tasks.AllSocket
       }
     ];
     
