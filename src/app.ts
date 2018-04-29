@@ -9,6 +9,7 @@ import * as mongodb from 'mongodb';
 import * as Auth from './sockets/auth/index';
 import * as Tasks from './sockets/tasks/index';
 import * as Messages from './sockets/messages/index';
+import * as Users from './sockets/users/index';
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { ViewsService } from './services/views.service';
@@ -58,6 +59,10 @@ class App {
       {
         name: 'message_add',
         socket_service: Messages.AddSocket
+      },
+      {
+        name: 'users_all',
+        socket_service: Users.AllSocket
       }
     ];
     
