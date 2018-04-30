@@ -10,7 +10,7 @@ export class AllSocket extends Socket{
     return this.value.token;
   }
 
-  launch() {
+  launch(fn) {
     return Promise
       .resolve()
       .then(
@@ -37,7 +37,7 @@ export class AllSocket extends Socket{
           throw new Error(EErrors.not_logged_in);
         }
       )
-      .then(res => this.socket.emit(this.event_name, res))
+      .then(res => fn(res))
       .catch(err => this.error(err, 'banner_error'))
   }
 }

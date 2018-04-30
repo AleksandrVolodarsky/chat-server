@@ -15,8 +15,8 @@ export class SocketsService {
         this
         this.socket_object.on(
           s.name,
-          v => {
-            return (new s.socket_service(this.app, this.socket_object, s.name, v)).launch();
+          (v, fn) => {
+            return (new s.socket_service(this.app, this.socket_object, s.name, v)).launch(fn);
           }
         );
       }

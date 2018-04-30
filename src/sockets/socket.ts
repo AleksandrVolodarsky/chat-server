@@ -18,5 +18,5 @@ export abstract class Socket{
     );
     return this;
   }
-  abstract launch();
+  abstract launch(fn?);
 }

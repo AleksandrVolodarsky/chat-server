@@ -23,7 +23,7 @@ export class RegistrationSocket extends Socket{
     return hash.HashPassword(this.password);
   }
 
-  launch() {
+  launch(fn) {
 
     return Promise
       .resolve()
@@ -64,7 +64,7 @@ export class RegistrationSocket extends Socket{
             });
         }
       )
-      .then(res => this.socket.emit(this.event_name, res))
+      .then(res => fn(res))
       .catch(msg => this.error(msg, 'banner_error'));
   }
 }

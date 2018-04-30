@@ -61,10 +61,15 @@ class App {
         socket_service: Messages.AddSocket
       },
       {
+        name: 'messages',
+        socket_service: Messages.AllSocket
+      },
+      {
         name: 'users_all',
         socket_service: Users.AllSocket
       }
     ];
+
     
     this.io.on(
       'connection',
@@ -72,15 +77,6 @@ class App {
 
         this.sockets_service = new SocketsService(this, socket, this.sockets);
         this.sockets_service.init();
-
-        // socket.on('registration');
-        // socket.on(
-        //   'whoami', 
-        //   user => {
-        //     console.log('WHOAMI', user);
-        //     socket.emit('whoami', user);
-        //   }
-        // );
         console.log(socket.id, 'a user connected');
       }
     );

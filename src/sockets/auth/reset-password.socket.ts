@@ -18,7 +18,7 @@ export class ResetPasswordSocket extends Socket{
     return hash.HashPassword(this.password);
   }
 
-  launch() {
+  launch(fn) {
 
     return Promise
       .resolve()
@@ -63,7 +63,7 @@ export class ResetPasswordSocket extends Socket{
           throw new Error(util.format(EErrors.not_found, 'User'));
         }
       )
-      .then(res => this.socket.emit(this.event_name, res))
+      .then(res => fn(res))
       .catch(err => this.error(err, 'banner_error'))
   }
 }

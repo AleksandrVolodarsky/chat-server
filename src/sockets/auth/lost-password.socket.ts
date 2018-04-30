@@ -19,7 +19,7 @@ export class LostPasswordSocket extends Socket{
     return _.times(20, () => _.random(35).toString(36)).join('');
   }
 
-  launch() {
+  launch(fn) {
     const lost_password_key = this.random_string;
     return Promise
       .resolve()
@@ -59,7 +59,7 @@ export class LostPasswordSocket extends Socket{
           throw new Error(util.format(EErrors.not_found, 'User'));
         }
       )
-      .then(res => this.socket.emit(this.event_name, res))
+      .then(res => fn(res))
       .catch(err => this.error(err, 'banner_error'))
   }
 }

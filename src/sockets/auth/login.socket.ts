@@ -18,7 +18,7 @@ export class LoginSocket extends Socket{
     return hash.HashPassword(this.password);
   }
 
-  launch() {
+  launch(fn) {
     return Promise
       .resolve()
       .then(
@@ -43,7 +43,7 @@ export class LoginSocket extends Socket{
         u => {
           if(u && u.password) {
             if (hash.CheckPassword(this.password, u.password)) {
-              return this.socket.emit(this.event_name, u);
+              fn(u);
             }
           }
           throw new Error(EErrors.password_incorrect);
