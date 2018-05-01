@@ -20,6 +20,7 @@ export class AddSocket extends Socket{
   }
 
   private user;
+  private task;
 
   launch() {
     return Promise
@@ -45,18 +46,20 @@ export class AddSocket extends Socket{
       .then(
         t => {
           if (t) {
+            this.task = t;
             return this.app.db
               .collection('messages')
               .insert({
                 message: this.message,
                 owner: this.user._id,
-                task_id: t._id
+                task_id: t._id,
+                created: (new Date()).toISOString().substring(0, 19).replace('T', ' ')
               })
           }
           throw new Error(util.format(EErrors.not_found, 'Task'));
         }
       )
-      .then(res => this.socket.emit(this.event_name, res))
+      .then(res => this.app.io.emit(this.event_name, res))
       .catch(err => this.error(err, 'banner_error'))
   }
 }
