@@ -31,7 +31,10 @@ export class AllSocket extends Socket{
             return this.app.db
               .collection('tasks')
               .find({
-                owner: u._id
+                "$or": [
+                  { owner: u._id },
+                  { participants: u._id }
+                ]
               }).toArray()
           }
           throw new Error(EErrors.not_logged_in);

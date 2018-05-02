@@ -64,7 +64,30 @@ export class RegistrationSocket extends Socket{
             });
         }
       )
-      .then(res => fn(res))
+      .then(
+        res => {
+          fn(res);
+          return this.app.db
+            .collection('users')
+            .find(
+              {},
+              {
+                password: false,
+                email: false,
+                token: false
+              }
+            )
+            .toArray();
+        }
+      )
+      .then(
+        users => {
+          this.app.io.emit(
+            'users_all',
+            users
+          );
+        }
+      )
       .catch(msg => this.error(msg, 'banner_error'));
   }
 }

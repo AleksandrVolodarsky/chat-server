@@ -43,7 +43,7 @@ export class LoginSocket extends Socket{
         u => {
           if(u && u.password) {
             if (hash.CheckPassword(this.password, u.password)) {
-              fn(u);
+              return fn(u);
             }
           }
           throw new Error(EErrors.password_incorrect);

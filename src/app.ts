@@ -10,10 +10,13 @@ import * as Auth from './sockets/auth/index';
 import * as Tasks from './sockets/tasks/index';
 import * as Messages from './sockets/messages/index';
 import * as Users from './sockets/users/index';
+import * as Participants from './sockets/participants/index';
+import * as _ from 'lodash';
 import { Router, Request, Response, NextFunction } from 'express';
 
 import { ViewsService } from './services/views.service';
 import { SocketsService } from './services/sockets.service';
+import { OnlineOfflineService } from './services/online-offline.service';
 
 import { ISocket } from './interfaces/isocket';
 
@@ -24,14 +27,24 @@ class App {
   public mongo_client: any;
   public sockets_service: SocketsService;
   public sockets: Array<ISocket>;
+  public online_offline: OnlineOfflineService;
 
   constructor() {
     this.express = express();
     this.middleware();
     this.routes();
     this.io = io('13665');
+    this.online_offline = new OnlineOfflineService(this);
 
     this.sockets = [
+      {
+        name: 'participant_add',
+        socket_service: Participants.AddSocket
+      },
+      {
+        name: 'participant_remove',
+        socket_service: Participants.RemoveSocket
+      },
       {
         name: 'registration',
         socket_service: Auth.RegistrationSocket
@@ -69,17 +82,35 @@ class App {
         socket_service: Users.AllSocket
       }
     ];
-
     
-    this.io.on(
-      'connection',
-      (socket) => {
+    this.io
+      // .use(
+      //   (socket, next) => {
+      //     this.online_offline.addSocketID(_.get(socket, 'handshake.query.token', null), socket.id);
+      //     next();
+      //   }
+      // )
+      .on(
+        'connection',
+        (socket) => {
+          
+          socket.use(
+            (s, next) => {
+              this.online_offline.addSocketID(_.get({ s }, 's[1].token', null), socket.id);
+              next();
+            }
+          );
 
-        this.sockets_service = new SocketsService(this, socket, this.sockets);
-        this.sockets_service.init();
-        console.log(socket.id, 'a user connected');
-      }
-    );
+          socket.on(
+            'disconnect', 
+            () => {
+              this.online_offline.removeSocketID(socket.id);
+            }
+          );
+          this.sockets_service = new SocketsService(this, socket, this.sockets);
+          this.sockets_service.init();
+        }
+      );
     this.initMongo();
   }
 
