@@ -25,7 +25,8 @@ export class OnlineOfflineService {
       console.log('.::Connected::.', token, socket_id);
       console.log(this.users);
       console.log('');
-      this.app.io.emit('online_offline', this.getTokens());
+
+      this.getIDs().then(ids => this.app.io.emit('online_offline', ids));
     }
     return this;
   }
@@ -49,7 +50,7 @@ export class OnlineOfflineService {
           console.log('.::Disconnected::.', socket_id);
           console.log(this.users);
           console.log('');
-          this.app.io.emit('online_offline', this.getTokens());
+          this.getIDs().then(ids => this.app.io.emit('online_offline', ids));
         }
       }
     );
@@ -85,5 +86,27 @@ export class OnlineOfflineService {
 
   getTokens() {
     return Object.keys(this.users);
+  }
+
+  tokensToIDs(tokens) {
+    let query = { "$or" : [] };
+    tokens.map(
+      t => {
+        query['$or'].push({ token : t });
+        return t;
+      }
+    );
+    if (query['$or'].length > 0) {
+      return this.app.db
+        .collection('users')
+        .find(query, { fields: { _id: 1 }})
+        .map(f => f._id)
+        .toArray();
+    }
+    return new Promise((resolve, reject) => { resolve([]) });
+  }
+
+  getIDs() {
+    return this.tokensToIDs(this.getTokens());
   }
 }
