@@ -73,6 +73,10 @@ class App {
         socket_service: Tasks.AllSocket
       },
       {
+        name: 'message_star',
+        socket_service: Messages.StarSocket
+      },
+      {
         name: 'message_add',
         socket_service: Messages.AddSocket
       },

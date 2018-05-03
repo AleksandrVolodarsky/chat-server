@@ -52,7 +52,12 @@ export class StarSocket extends Socket{
           throw new Error(util.format(EErrors.not_found, `Message ${ this.message_id }`));
         }
       )
-      .then(res => fn(this.message))
+      .then(
+        updated => this.app.db.collection('tasks').findOne({ _id: this.message.task_id })
+      )
+      .then(
+        t => this.app.tasks_service.sendToTaskParticipants(t, this.event_name, this.message)
+      )
       .catch(err => this.error(err, 'banner_error'))
   }
 }
