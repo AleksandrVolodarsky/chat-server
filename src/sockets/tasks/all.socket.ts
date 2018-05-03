@@ -3,6 +3,7 @@ import { EErrors } from '../../enums/eerrors.enum';
 import * as hash from 'wordpress-hash-node';
 import * as util from 'util';
 import * as _ from 'lodash';
+import * as mongodb from 'mongodb';
 
 export class AllSocket extends Socket{
 
@@ -30,12 +31,13 @@ export class AllSocket extends Socket{
             }
             return this.app.db
               .collection('tasks')
-              .find({
-                "$or": [
-                  { owner: u._id },
-                  { participants: u._id }
-                ]
-              }).toArray()
+              .find({ 
+                '$or': [
+                  { participants: u._id.toString() },
+                  { owner: u._id }
+                ] 
+              })
+              .toArray();
           }
           throw new Error(EErrors.not_logged_in);
         }

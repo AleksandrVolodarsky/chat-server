@@ -28,6 +28,7 @@ export class RemoveSocket extends Socket{
   }
 
   private task;
+  private old_participants;
 
   launch() {
     return Promise
@@ -56,6 +57,7 @@ export class RemoveSocket extends Socket{
           if (t) {
             let participants = t.participants || [];
             if (participants.indexOf(this.id) > -1) {
+              this.old_participants = participants;
               participants = participants.filter(v => v != this.id);
               this.task = t;
               this.task.participants = participants;
@@ -75,8 +77,9 @@ export class RemoveSocket extends Socket{
         res => {
           let ids, query;
           ids = [this.task.owner];
-          if (this.task.participants instanceof Array) {
-            ids = ids.concat(this.task.participants);
+
+          if (this.old_participants instanceof Array) {
+            ids = ids.concat(this.old_participants);
           }
           query = { "$or" : [] };
           ids.map(
