@@ -75,36 +75,9 @@ export class RemoveSocket extends Socket{
       )
       .then(
         res => {
-          let ids, query;
-          ids = [this.task.owner];
-
-          if (this.old_participants instanceof Array) {
-            ids = ids.concat(this.old_participants);
-          }
-          query = { "$or" : [] };
-          ids.map(
-            id => {
-              query['$or'].push({ _id : new mongodb.ObjectID(id) });
-              return id;
-            }
-          );
-          return this.app.db
-            .collection('users')
-            .find(query, { token: true })
-            .toArray();
-        }
-      )
-      .then(
-        tokens => {
-          if (tokens instanceof Array && tokens.length > 0) {
-            tokens.map(
-              t => {
-                if (t.token) {
-                  this.app.online_offline.sendTo('update_task', t.token, this.task);
-                }
-              }
-            );
-          }
+          let copy = Object.assign({}, this.task);
+          copy.participants = this.old_participants;
+          return this.app.tasks_service.sendToTaskParticipants(copy, 'update_task', this.task);
         }
       )
       .catch(err => this.error(err, 'banner_error'))

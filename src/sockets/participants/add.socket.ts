@@ -72,37 +72,7 @@ export class AddSocket extends Socket{
         }
       )
       .then(
-        res => {
-          let ids, query;
-          ids = [this.task.owner];
-          if (this.task.participants instanceof Array) {
-            ids = ids.concat(this.task.participants);
-          }
-          query = { "$or" : [] };
-          ids.map(
-            id => {
-              query['$or'].push({ _id : new mongodb.ObjectID(id) });
-              return id;
-            }
-          );
-          return this.app.db
-            .collection('users')
-            .find(query, { token: true })
-            .toArray();
-        }
-      )
-      .then(
-        tokens => {
-          if (tokens instanceof Array && tokens.length > 0) {
-            tokens.map(
-              t => {
-                if (t.token) {
-                  this.app.online_offline.sendTo('update_task', t.token, this.task);
-                }
-              }
-            );
-          }
-        }
+        res => this.app.tasks_service.sendToTaskParticipants(this.task, 'update_task', this.task)
       )
       .catch(err => this.error(err, 'banner_error'))
   }

@@ -16,6 +16,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 
 import { ViewsService } from './services/views.service';
 import { SocketsService } from './services/sockets.service';
+import { TasksService } from './services/tasks.service';
 import { OnlineOfflineService } from './services/online-offline.service';
 
 import { ISocket } from './interfaces/isocket';
@@ -28,6 +29,7 @@ class App {
   public sockets_service: SocketsService;
   public sockets: Array<ISocket>;
   public online_offline: OnlineOfflineService;
+  public tasks_service: TasksService;
 
   constructor() {
     this.express = express();
@@ -35,6 +37,7 @@ class App {
     this.routes();
     this.io = io('13665');
     this.online_offline = new OnlineOfflineService(this);
+    this.tasks_service  = new TasksService(this);
 
     this.sockets = [
       {
