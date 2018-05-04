@@ -11,6 +11,7 @@ import * as Tasks from './sockets/tasks/index';
 import * as Messages from './sockets/messages/index';
 import * as Users from './sockets/users/index';
 import * as Participants from './sockets/participants/index';
+import * as Admin from './sockets/admin/index';
 import * as _ from 'lodash';
 import { Router, Request, Response, NextFunction } from 'express';
 
@@ -40,6 +41,10 @@ class App {
     this.tasks_service  = new TasksService(this);
 
     this.sockets = [
+      {
+        name: 'update-all-messages-count',
+        socket_service: Admin.UpdateAllMessagesCountSocket
+      },
       {
         name: 'participant_add',
         socket_service: Participants.AddSocket

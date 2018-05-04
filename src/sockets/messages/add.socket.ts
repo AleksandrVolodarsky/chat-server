@@ -11,6 +11,10 @@ export class AddSocket extends Socket{
     return this.value.message;
   }
 
+  get files(): Array<any> {
+    return this.value.files;
+  }
+
   get task_id(): string {
     return this.value.task_id;
   }
@@ -47,19 +51,44 @@ export class AddSocket extends Socket{
         t => {
           if (t) {
             this.task = t;
+            let data = {
+              message: this.message,
+              owner: this.user._id,
+              task_id: t._id,
+              created: (new Date()).toISOString().substring(0, 19).replace('T', ' ')
+            };
+
+            if (this.files instanceof Array && this.files.length > 0) {
+              data['files'] = this.files;
+            }
             return this.app.db
               .collection('messages')
-              .insert({
-                message: this.message,
-                owner: this.user._id,
-                task_id: t._id,
-                created: (new Date()).toISOString().substring(0, 19).replace('T', ' ')
-              })
+              .insert(data)
           }
           throw new Error(util.format(EErrors.not_found, 'Task'));
         }
       )
-      .then(res => this.app.io.emit(this.event_name, res))
+      .then(
+        res => {
+          let messages_count = parseInt(this.task.messages_count) || 0;
+          messages_count++;
+          this.task.messages_count = messages_count;
+          this.app.io.emit(this.event_name, res);
+          return this.app.db
+            .collection('tasks')
+            .update(
+              { _id: this.task._id },
+              {
+                "$set": { 
+                  "messages_count": messages_count
+                },
+              }
+            )
+        }
+      )
+      .then(
+        res => this.app.tasks_service.sendToTaskParticipants(this.task, 'update_task', this.task)
+      )
       .catch(err => this.error(err, 'banner_error'))
   }
 }
