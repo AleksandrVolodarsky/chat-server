@@ -28,6 +28,7 @@ export class AddSocket extends Socket{
   }
 
   private task;
+  private user;
 
   launch() {
     return Promise
@@ -42,6 +43,7 @@ export class AddSocket extends Socket{
       .then(
         u => {
           if(u) {
+            this.user = u;
             return this.app.db
               .collection('tasks')
               .findOne({
@@ -54,6 +56,9 @@ export class AddSocket extends Socket{
       .then(
         t => {
           if (t) {
+            if (this.user.role != 0 && t.owner != this.user._id) {
+              throw new Error(EErrors.not_owner);
+            }
             let participants = t.participants || [];
             if (participants.indexOf(this.id) == -1) {
               participants.push(this.id);

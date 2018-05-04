@@ -30,4 +30,5 @@ export enum EErrors {
   invalid_lost_password_time  = 'Lost password time invalid!',
   update_avatar_error         = 'Update avatar error!',
   cant_create                 = 'Can not create %s',
+  not_owner                   = 'You are not owner',
 }

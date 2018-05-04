@@ -42,6 +42,10 @@ class App {
 
     this.sockets = [
       {
+        name: 'read',
+        socket_service: Messages.ReadSocket
+      },
+      {
         name: 'update-all-messages-count',
         socket_service: Admin.UpdateAllMessagesCountSocket
       },
