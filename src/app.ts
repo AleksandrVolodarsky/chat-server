@@ -7,6 +7,7 @@ import * as child from 'child_process';
 import * as io from 'socket.io';
 import * as mongodb from 'mongodb';
 import * as Auth from './sockets/auth/index';
+import * as Task from './sockets/task/index';
 import * as Tasks from './sockets/tasks/index';
 import * as Messages from './sockets/messages/index';
 import * as Users from './sockets/users/index';
@@ -42,6 +43,10 @@ class App {
     this.tasks_service  = new TasksService(this);
 
     this.sockets = [
+      {
+        name: 'toggle_close',
+        socket_service: Task.ToggleCloseSocket
+      },
       {
         name: 'update_settings',
         socket_service: User.UpdateSettingsSocket
