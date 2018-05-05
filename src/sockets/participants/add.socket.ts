@@ -56,7 +56,7 @@ export class AddSocket extends Socket{
       .then(
         t => {
           if (t) {
-            if (this.user.role != 0 && t.owner != this.user._id) {
+            if (this.user.role != 0 && t.owner != this.user._id.toString()) {
               throw new Error(EErrors.not_owner);
             }
             let participants = t.participants || [];
