@@ -26,6 +26,8 @@ export class UpdateSettingsSocket extends Socket{
     return this.value.avatar;
   }
 
+  private user;
+
   launch(fn) {
     return Promise
       .resolve()
@@ -39,6 +41,7 @@ export class UpdateSettingsSocket extends Socket{
       .then(
         u => {
           if(u) {
+            this.user = u;
             let data = {};
             if (this.password != '') {
               if (this.password.length > 4) {
@@ -70,7 +73,30 @@ export class UpdateSettingsSocket extends Socket{
           throw new Error(EErrors.not_logged_in);
         }
       )
-      .then(res => fn(res))
+      .then(
+        res => {
+          fn(this.user);
+          return this.app.db
+            .collection('users')
+            .find(
+              {},
+              {
+                password: false,
+                email: false,
+                token: false
+              }
+            )
+            .toArray();
+        }
+      )
+      .then(
+        users => {
+          this.app.io.emit(
+            'users_all',
+            users
+          );
+        }
+      )
       .catch(err => this.error(err, 'banner_error'))
   }
 }
